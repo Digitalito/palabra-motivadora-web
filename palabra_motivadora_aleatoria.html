@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Palabra Motivadora</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(-45deg, #0f0f0f, #1a1a2e, #16213e, #0f3460);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: white;
+      overflow: hidden;
+      background-size: 400% 400%;
+      animation: fondoAnimado 20s ease infinite;
+      transition: background 2s ease;
+    }
+
+    @keyframes fondoAnimado {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    .container {
+      text-align: center;
+      padding: 40px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      backdrop-filter: blur(10px);
+      animation: fadeIn 1s ease-in-out;
+      position: relative;
+    }
+
+    #palabra {
+      font-size: 3rem;
+      font-weight: bold;
+      animation: aparecer 1s ease-out forwards;
+      opacity: 0;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+
+    #frase {
+      font-size: 1.5rem;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+
+    #modo-toggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background-color: rgba(255,255,255,0.1);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      color: white;
+      cursor: pointer;
+    }
+
+    #mensaje-inactivo {
+      position: absolute;
+      top: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.5s;
+      font-size: 1rem;
+      color: #aaa;
+      font-style: italic;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes aparecer {
+      to { opacity: 1; transform: scale(1.1); }
+    }
+      @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.02); opacity: 0.85; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+  .tutorial {
+  position: absolute;
+  top: 100px;
+  max-width: 90%;
+  text-align: center;
+  font-size: 1rem;
+  color: #ccc;
+  background-color: rgba(0,0,0,0.4);
+  padding: 10px 20px;
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  opacity: 1;
+  transition: opacity 1s ease, transform 1s ease;
+  animation: pulse 2s infinite;
+}
+
+.tutorial.ocultar {
+  opacity: 0;
+  transform: translateY(-20px) scale(0.95);
+}
+</style>
+</head>
+<body onclick="generarPalabra(); resetInactividad()">
+  <button id="modo-toggle" onclick="toggleModo(event)">Modo: Palabra</button>
+  <div id="tutorial" class="tutorial">
+    💡 Haz clic en cualquier parte de la pantalla para cambiar la palabra.<br>Usa el botón de la esquina superior para alternar entre modo 'Palabra' y 'Frase'.<br><br><button onclick="ocultarTutorial(event)" style="margin-top: 10px; padding: 6px 14px; background: rgba(255,255,255,0.1); border: none; color: #fff; border-radius: 8px; cursor: pointer;">Entendido</button>
+  </div>
+
+<div id="mensaje-inactivo">Haz clic para otra palabra</div>
+    <div id="palabra">Haz clic para comenzar</div>
+    <div id="frase"></div>
+  </div>
+
+  <script>
+    const palabras = [
+      "Ánimo", "Esperanza", "Confianza", "Esfuerzo", "Pasión", "Éxito", "Fuerza", "Valentía", "Alegría", "Paciencia",
+      "Optimismo", "Perseverancia", "Gratitud", "Enfoque", "Motivación", "Coraje", "Foco", "Disciplina", "Constancia", "Sueños",
+      "Superación", "Resiliencia", "Actitud", "Crecimiento", "Inspiración", "Tenacidad", "Energía", "Determinación", "Confianza",
+      "Entusiasmo", "Logro", "Estabilidad", "Serenidad", "Empuje", "Progreso", "Dedicación", "Pasos", "Meta", "Ilusión",
+      "Creatividad", "Decisión", "Visión", "Desarrollo", "Autenticidad", "Libertad", "Voluntad", "Fe", "Propósito", "Discernimiento",
+      "Triunfo", "Carácter", "Intensidad", "Constancia", "Certeza", "Innovación", "Compromiso", "Claridad", "Convicción", "Valor",
+      "Balance", "Iluminación", "Evolución", "Autoconfianza", "Valía", "Tolerancia", "Autonomía", "Esencia", "Transformación",
+      "Dignidad", "Decisión", "Potencial", "Impacto", "Cambio", "Poder", "Sabiduría", "Serenidad", "Grandeza", "Pasión",
+      "Liderazgo", "Impulso", "Éxito", "Voluntad", "Sueño", "Compasión", "Honestidad", "Orgullo", "Conexión", "Propósito",
+      "Respeto", "Entrega", "Misión", "Causa", "Reinvención", "Valoración", "Alegría", "Unidad", "Empatía", "Claridad"
+    ];
+
+    const frases = [
+  "Tu palabra clave es ___, úsala para brillar.",
+  "Nunca subestimes el poder de la ___ en tu vida.",
+  "La ___ puede abrir puertas que nunca imaginaste.",
+  "Construye tu camino con ___ cada día.",
+  "La ___ te empuja hacia tu mejor versión.",
+  "En los momentos difíciles, recuerda la ___ que llevas dentro.",
+  "Solo con ___ puedes alcanzar lo imposible.",
+  "No hay límites para quien tiene ___ como motor.",
+  "La vida se transforma cuando actúas con ___.",
+  "Haz de la ___ tu bandera en cada paso.",
+  "La ___ es más poderosa que cualquier excusa.",
+  "Respira hondo y llénate de ___.",
+  "Donde hay ___, hay esperanza.",
+  "La ___ transforma los sueños en logros.",
+  "Camina con ___ y llegarás lejos.",
+  "La ___ no se ve, pero se siente en cada acción.",
+  "Sigue adelante, la ___ es tu aliada.",
+  "No hay tormenta que apague tu ___.",
+  "Cada día empieza mejor con un poco de ___.",
+  "Tu éxito está anclado en tu ___.",
+  "La ___ es la brújula del alma.",
+  "Confía en ti y en tu ___.",
+  "Tu ___ es contagiosa, compártela.",
+  "La ___ convierte los problemas en oportunidades.",
+  "Lucha con ___ y vencerás.",
+  "Nunca es tarde para recuperar la ___ perdida.",
+  "Haz de la ___ tu superpoder.",
+  "La ___ no se compra, se cultiva.",
+  "Cree en tu ___ más que en tus dudas.",
+  "Lo que haces con ___ permanece para siempre.",
+  "El secreto del cambio está en la ___.",
+  "La ___ da sentido a cada paso.",
+  "Con ___ se llega más lejos que con suerte.",
+  "Donde hay ___, florecen los sueños.",
+  "La ___ no se rinde.",
+  "Abre tu corazón a la ___.",
+  "Transforma el miedo en ___.",
+  "La ___ ilumina incluso los días más oscuros.",
+  "Actuar con ___ te hace invencible.",
+  "El mundo necesita más personas con ___.",
+  "Haz espacio en tu vida para la ___.",
+  "La ___ multiplica tu energía.",
+  "Tu camino está hecho de ___.",
+  "La ___ es un faro en la tormenta.",
+  "La ___ te da alas.",
+  "Ningún obstáculo puede con la ___.",
+  "La ___ te conecta con tu propósito.",
+  "Sigue brillando con ___.",
+  "Cambia tu mundo con ___.",
+  "Tu historia necesita más ___.",
+  "La ___ es un regalo que te das a ti mismo.",
+  "Respira ___, exhala duda.",
+  "No pierdas la ___, ni siquiera en la oscuridad.",
+  "Cada paso con ___ es una victoria.",
+  "La ___ construye carácter.",
+  "Tu fuerza nace de tu ___.",
+  "Cultiva la ___ como una flor diaria.",
+  "Tu día mejora con un poco de ___.",
+  "Todo empieza con ___.",
+  "Encuentra paz en tu ___.",
+  "La ___ es tu chispa eterna.",
+  "La ___ puede más que el miedo.",
+  "Tus logros nacen de la ___.",
+  "Alimenta tu espíritu con ___.",
+  "La ___ es revolución interna.",
+  "Elige ___, siempre.",
+  "Cada desafío es más fácil con ___.",
+  "Tu ___ es tu guía.",
+  "La ___ vibra en ti.",
+  "La ___ te hace auténtico.",
+  "Ponle ___ a tus días grises.",
+  "La ___ enciende tu creatividad.",
+  "El alma crece con ___.",
+  "Nada supera a la ___ verdadera.",
+  "Encuentra consuelo en la ___.",
+  "La ___ es una revolución silenciosa.",
+  "No hay límites para la ___.",
+  "Tu ___ es tu marca.",
+  "Haz de la ___ tu escudo.",
+  "La ___ te impulsa a avanzar.",
+  "Contagia al mundo con tu ___.",
+  "La ___ embellece la lucha.",
+  "Con ___ no hay derrota.",
+  "Da pasos pequeños, pero con ___.",
+  "Vive con ___ en el pecho.",
+  "La ___ es la semilla del éxito.",
+  "Tu ___ hace la diferencia.",
+  "Ama con ___, lucha con ___, vive con ___.",
+  "La ___ te recuerda quién eres.",
+  "Haz de la ___ tu bandera.",
+  "Vuelve a la ___ cuando lo olvides todo.",
+  "Sé faro de ___ para otros.",
+  "La ___ es tu hogar.",
+  "Transforma tu día con ___.",
+  "Con ___ se construye el mañana.",
+  "Eres más fuerte cuando eliges la ___.",
+  "La ___ abre caminos invisibles.",
+  "Siente la ___ moverse en ti.",
+  "La ___ florece en el silencio.",
+  "Cada error es una oportunidad de ___.",
+  "La ___ nace del corazón.",
+  "Ríe con ___, vive con ___, sueña con ___."
+];
+
+    let modoFrase = false;
+    let inactividadTimer;
+
+    function toggleModo(event) {
+      event.stopPropagation();
+      modoFrase = !modoFrase;
+      document.getElementById("modo-toggle").textContent = `Modo: ${modoFrase ? 'Frase' : 'Palabra'}`;
+      generarPalabra();
+    }
+
+    function generarPalabra() {
+      const aleatoria = palabras[Math.floor(Math.random() * palabras.length)];
+      const palabraDiv = document.getElementById("palabra");
+      const fraseDiv = document.getElementById("frase");
+
+      palabraDiv.textContent = aleatoria;
+      palabraDiv.style.opacity = 0;
+      palabraDiv.style.animation = "none";
+      void palabraDiv.offsetWidth;
+      palabraDiv.style.animation = "aparecer 0.8s ease forwards";
+
+      if (modoFrase) {
+        const plantilla = frases[Math.floor(Math.random() * frases.length)];
+        const fraseFinal = plantilla.replace("___", aleatoria.toLowerCase());
+        fraseDiv.textContent = fraseFinal;
+        fraseDiv.style.opacity = 1;
+      } else {
+        fraseDiv.textContent = "";
+        fraseDiv.style.opacity = 0;
+      }
+    }
+
+    function resetInactividad() {
+      clearTimeout(inactividadTimer);
+      document.getElementById("mensaje-inactivo").style.opacity = 0;
+      inactividadTimer = setTimeout(() => {
+        document.getElementById("mensaje-inactivo").style.opacity = 1;
+      }, 15000);
+    }
+
+    window.onload = () => {
+      generarPalabra();
+      resetInactividad();
+    }
+  
+    function ocultarTutorial(event) {
+  event.stopPropagation();
+  const tutorial = document.getElementById("tutorial");
+  tutorial.classList.add("ocultar")
+  tutorial.classList.add("ocultar")
+  setTimeout(() => {
+    if (tutorial && tutorial.parentNode) {
+      tutorial.parentNode.removeChild(tutorial);
+    }
+  }, 1000);
+}
+
+    // Opcional: ocultar automáticamente después de 10s
+    setTimeout(() => {
+  const tutorial = document.getElementById("tutorial");
+  if (tutorial) {
+    tutorial.style.transition = "opacity 1s ease, transform 1s ease";
+    tutorial.style.opacity = 0;
+    tutorial.style.transform = "translateY(-20px) scale(0.95)";
+    setTimeout(() => {
+      if (tutorial && tutorial.parentNode) {
+        tutorial.parentNode.removeChild(tutorial);
+      }
+    }, 1000);
+  }
+}, 20000);
+  </script>
+</body>
+</html>
