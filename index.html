@@ -1,93 +1,139 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="icon.png" type="image/png">
-  <link rel="stylesheet" href="transiciones.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Palabras motivadoras aleatorias con frases inspiradoras">
+  <meta name="theme-color" content="#0f3460">
   <title>Palabra Motivadora</title>
   <link rel="manifest" href="manifest.json">
-  <script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('service-worker.js')
-      .then(reg => console.log('Service worker registrado ✅'))
-      .catch(err => console.log('Fallo el registro 😬', err));
-  }
-  </script>
-
+  <link rel="icon" href="icon.png" type="image/png">
   <style>
+    /* Variables CSS */
+    :root {
+      --color-primary: #0f3460;
+      --color-secondary: #16213e;
+      --color-accent: #e94560;
+      --color-text: #ffffff;
+      --color-bg: #0f0f0f;
+      --border-radius: 20px;
+      --transition-duration: 0.4s;
+    }
+    
+    /* Reset y estilos base */
     * {
       box-sizing: border-box;
-    }
-
-    body {
       margin: 0;
       padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       height: 100vh;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      background: linear-gradient(-45deg, #0f0f0f, #1a1a2e, #16213e, #0f3460);
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: white;
-      overflow: hidden;
+      background: linear-gradient(-45deg, var(--color-bg), var(--color-secondary), var(--color-primary));
       background-size: 400% 400%;
       animation: fondoAnimado 20s ease infinite;
-      transition: background 2s ease;
+      color: var(--color-text);
+      overflow: hidden;
+      transition: background var(--transition-duration) ease;
+      position: relative;
+      touch-action: manipulation;
     }
-
+    
+    /* Animación de fondo */
     @keyframes fondoAnimado {
-      0% {
-        background-position: 0% 50%;
-      }
-      50% {
-        background-position: 100% 50%;
-      }
-      100% {
-        background-position: 0% 50%;
-      }
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
-
+    
+    /* Contenedor principal */
     .container {
       text-align: center;
-      padding: 40px;
+      padding: 30px 20px;
       background: rgba(255, 255, 255, 0.05);
-      border-radius: 20px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      border-radius: var(--border-radius);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
       backdrop-filter: blur(10px);
       animation: fadeIn 1s ease-in-out;
       position: relative;
+      max-width: 95%;
+      width: 700px;
+      margin: 0 auto;
     }
-
+    
+    /* Palabra motivadora */
     #palabra {
-      font-size: 3rem;
+      font-size: clamp(2.5rem, 8vw, 3.5rem);
       font-weight: bold;
       animation: aparecer 1s ease-out forwards;
       opacity: 0;
       cursor: pointer;
-      margin-bottom: 20px;
+      margin: 20px 0;
+      min-height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+      transition: transform 0.3s ease;
+      padding: 10px;
     }
-
+    
+    #palabra:hover {
+      transform: scale(1.05);
+    }
+    
+    /* Frase inspiradora */
     #frase {
-      font-size: 1.5rem;
+      font-size: clamp(1.2rem, 4vw, 1.6rem);
       opacity: 0;
-      transition: opacity 0.8s ease;
+      transition: opacity var(--transition-duration) ease;
+      line-height: 1.6;
+      margin-top: 20px;
+      font-style: italic;
+      min-height: 80px;
+      padding: 0 10px;
     }
-
-    #modo-toggle {
+    
+    /* Botones de control */
+    .control-buttons {
       position: absolute;
-      top: 20px;
-      right: 20px;
-      background-color: rgba(255,255,255,0.1);
+      top: 15px;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 15px;
+      z-index: 10;
+    }
+    
+    .control-button {
+      background-color: rgba(255, 255, 255, 0.1);
       border: none;
-      padding: 10px 20px;
+      padding: 10px 15px;
       border-radius: 10px;
       color: white;
       cursor: pointer;
+      transition: all var(--transition-duration) ease;
+      font-weight: 600;
+      backdrop-filter: blur(5px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      font-size: clamp(0.8rem, 3.5vw, 1rem);
+      display: flex;
+      align-items: center;
+      gap: 5px;
     }
-
+    
+    .control-button:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+    
+    /* Mensaje de inactividad */
     #mensaje-inactivo {
       position: absolute;
       top: -30px;
@@ -95,251 +141,549 @@
       transform: translateX(-50%);
       opacity: 0;
       transition: opacity 0.5s;
-      font-size: 1rem;
+      font-size: clamp(0.8rem, 3vw, 1rem);
       color: #aaa;
       font-style: italic;
     }
-
+    
+    /* Tutorial */
+    .tutorial {
+      position: absolute;
+      top: 80px;
+      max-width: 90%;
+      text-align: center;
+      font-size: clamp(0.9rem, 3.5vw, 1rem);
+      color: #ccc;
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 20px;
+      border-radius: 12px;
+      backdrop-filter: blur(8px);
+      opacity: 0;
+      transform: translateY(20px) scale(0.95);
+      z-index: 100;
+      width: min(350px, 90%);
+      animation: tutorialEntrada 0.8s ease forwards;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .tutorial button {
+      margin-top: 15px;
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.15);
+      border: none;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      font-size: clamp(0.8rem, 3.5vw, 0.9rem);
+    }
+    
+    .tutorial button:hover {
+      background: rgba(255, 255, 255, 0.25);
+      transform: scale(1.05);
+    }
+    
+    .tutorial.ocultar {
+      animation: tutorialSalida 0.8s ease forwards !important;
+    }
+    
+    /* Footer */
+    footer {
+      position: absolute;
+      bottom: 15px;
+      text-align: center;
+      width: 100%;
+      font-size: clamp(0.75rem, 3vw, 0.9rem);
+      color: rgba(255, 255, 255, 0.6);
+      padding: 0 20px;
+    }
+    
+    footer strong {
+      color: var(--color-accent);
+      font-weight: 600;
+    }
+    
+    /* Animaciones */
     @keyframes fadeIn {
       from { opacity: 0; transform: scale(0.9); }
       to { opacity: 1; transform: scale(1); }
     }
-
+    
     @keyframes aparecer {
       to { opacity: 1; transform: scale(1.1); }
     }
-      @keyframes pulse {
+    
+    @keyframes pulse {
       0% { transform: scale(1); opacity: 1; }
       50% { transform: scale(1.02); opacity: 0.85; }
       100% { transform: scale(1); opacity: 1; }
     }
-  .tutorial {
-  position: absolute;
-  top: 100px;
-  max-width: 90%;
-  text-align: center;
-  font-size: 1rem;
-  color: #ccc;
-  background-color: rgba(0,0,0,0.4);
-  padding: 10px 20px;
-  border-radius: 12px;
-  backdrop-filter: blur(8px);
-  opacity: 1;
-  transition: opacity 1s ease, transform 1s ease;
-  animation: pulse 2s infinite;
-}
-
-.tutorial.ocultar {
-  opacity: 0;
-  transform: translateY(-20px) scale(0.95);
-}
-</style>
+    
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+    }
+    
+    @keyframes tutorialEntrada {
+      from { opacity: 0; transform: translateY(20px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    
+    @keyframes tutorialSalida {
+      from { opacity: 1; transform: translateY(0) scale(1); }
+      to { opacity: 0; transform: translateY(-20px) scale(0.95); }
+    }
+    
+    /* Estrellas de fondo */
+    .stars {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+    }
+    
+    .star {
+      position: absolute;
+      background-color: white;
+      border-radius: 50%;
+      animation: float 3s infinite ease-in-out;
+    }
+    
+    /* Botón flotante para móviles */
+    .mobile-tap-hint {
+      position: absolute;
+      bottom: 80px;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(5px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      animation: pulse 2s infinite;
+      z-index: 50;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .mobile-tap-hint::before {
+      content: "Toca aquí";
+      position: absolute;
+      bottom: -30px;
+      font-size: 0.8rem;
+      white-space: nowrap;
+    }
+    
+    /* Media queries para móviles */
+    @media (max-width: 768px) {
+      .container {
+        padding: 25px 15px;
+        width: 95%;
+      }
+      
+      #palabra {
+        min-height: 80px;
+      }
+      
+      .tutorial {
+        top: 70px;
+      }
+      
+      .control-buttons {
+        padding: 0 10px;
+      }
+      
+      .mobile-tap-hint {
+        display: flex;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .container {
+        padding: 20px 10px;
+      }
+      
+      .control-button {
+        padding: 8px 12px;
+      }
+      
+      .tutorial {
+        padding: 15px;
+      }
+    }
+    
+    @media (hover: none) and (pointer: coarse) {
+      #palabra:hover {
+        transform: none;
+      }
+      
+      .control-button:hover {
+        transform: none;
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+    }
+  </style>
 </head>
-<body onclick="generarPalabra(); resetInactividad()">
-  <button id="modo-toggle" onclick="toggleModo(event)">Modo: Palabra</button>
-  <div id="tutorial" class="tutorial">
-    💡 Haz clic en cualquier parte de la pantalla para cambiar la palabra.<br>Usa el botón de la esquina superior para alternar entre modo 'Palabra' y 'Frase'.<br><br><button onclick="ocultarTutorial(event)" style="margin-top: 10px; padding: 6px 14px; background: rgba(255,255,255,0.1); border: none; color: #fff; border-radius: 8px; cursor: pointer;">Entendido</button>
+<body>
+  <!-- Fondo estrellado dinámico -->
+  <div class="stars" id="stars"></div>
+  
+  <!-- Botones de control -->
+  <div class="control-buttons">
+    <button id="share-btn" class="control-button">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+        <polyline points="16 6 12 2 8 6"></polyline>
+        <line x1="12" y1="2" x2="12" y2="15"></line>
+      </svg>
+      Compartir
+    </button>
+    
+    <button id="modo-toggle" class="control-button">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path>
+      </svg>
+      Modo: Palabra
+    </button>
   </div>
-
-<div id="mensaje-inactivo">Haz clic para otra palabra</div>
-    <div id="palabra">Haz clic para comenzar</div>
+  
+  <!-- Tutorial -->
+  <div id="tutorial" class="tutorial">
+    💡 Toca en cualquier parte de la pantalla para cambiar la palabra<br><br>
+    Usa los botones de arriba para alternar entre modo 'Palabra' y 'Frase' o compartir
+    <button onclick="ocultarTutorial(event)">Entendido</button>
+  </div>
+  
+  <!-- Mensaje de inactividad -->
+  <div id="mensaje-inactivo">Toca para otra palabra</div>
+  
+  <!-- Indicador de cambio para móviles -->
+  <div class="mobile-tap-hint">
+    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+      <circle cx="12" cy="12" r="3"></circle>
+    </svg>
+  </div>
+  
+  <!-- Contenido principal -->
+  <div class="container">
+    <div id="palabra">Toca para comenzar</div>
     <div id="frase"></div>
   </div>
-
+  
+  <!-- Footer actualizado -->
+  <footer>
+    Hecho por <strong>Digital</strong>, <strong>ChatGPT</strong> y <strong>DeepSeek</strong>
+  </footer>
+  
   <script>
+    // Datos de palabras y frases
     const palabras = [
       "Ánimo", "Esperanza", "Confianza", "Esfuerzo", "Pasión", "Éxito", "Fuerza", "Valentía", "Alegría", "Paciencia",
       "Optimismo", "Perseverancia", "Gratitud", "Enfoque", "Motivación", "Coraje", "Foco", "Disciplina", "Constancia", "Sueños",
-      "Superación", "Resiliencia", "Actitud", "Crecimiento", "Inspiración", "Tenacidad", "Energía", "Determinación", "Confianza",
-      "Entusiasmo", "Logro", "Estabilidad", "Serenidad", "Empuje", "Progreso", "Dedicación", "Pasos", "Meta", "Ilusión",
-      "Creatividad", "Decisión", "Visión", "Desarrollo", "Autenticidad", "Libertad", "Voluntad", "Fe", "Propósito", "Discernimiento",
-      "Triunfo", "Carácter", "Intensidad", "Constancia", "Certeza", "Innovación", "Compromiso", "Claridad", "Convicción", "Valor",
-      "Balance", "Iluminación", "Evolución", "Autoconfianza", "Valía", "Tolerancia", "Autonomía", "Esencia", "Transformación",
-      "Dignidad", "Decisión", "Potencial", "Impacto", "Cambio", "Poder", "Sabiduría", "Serenidad", "Grandeza", "Pasión",
-      "Liderazgo", "Impulso", "Éxito", "Voluntad", "Sueño", "Compasión", "Honestidad", "Orgullo", "Conexión", "Propósito",
-      "Respeto", "Entrega", "Misión", "Causa", "Reinvención", "Valoración", "Alegría", "Unidad", "Empatía", "Claridad"
+      "Superación", "Resiliencia", "Actitud", "Crecimiento", "Inspiración", "Tenacidad", "Energía", "Determinación", "Entusiasmo",
+      "Logro", "Estabilidad", "Serenidad", "Empuje", "Progreso", "Dedicación", "Pasos", "Meta", "Ilusión", "Creatividad", "Decisión",
+      "Visión", "Desarrollo", "Autenticidad", "Libertad", "Voluntad", "Fe", "Propósito", "Discernimiento", "Triunfo", "Carácter",
+      "Intensidad", "Certeza", "Innovación", "Compromiso", "Claridad", "Convicción", "Valor", "Balance", "Iluminación", "Evolución",
+      "Autoconfianza", "Valía", "Tolerancia", "Autonomía", "Esencia", "Transformación", "Dignidad", "Potencial", "Impacto", "Cambio",
+      "Poder", "Sabiduría", "Serenidad", "Grandeza", "Liderazgo", "Impulso", "Compasión", "Honestidad", "Orgullo", "Conexión",
+      "Respeto", "Entrega", "Misión", "Causa", "Reinvención", "Valoración", "Unidad", "Empatía", "Claridad"
     ];
-
+    
     const frases = [
-  "Tu palabra clave es ___, úsala para brillar.",
-  "Nunca subestimes el poder de la ___ en tu vida.",
-  "La ___ puede abrir puertas que nunca imaginaste.",
-  "Construye tu camino con ___ cada día.",
-  "La ___ te empuja hacia tu mejor versión.",
-  "En los momentos difíciles, recuerda la ___ que llevas dentro.",
-  "Solo con ___ puedes alcanzar lo imposible.",
-  "No hay límites para quien tiene ___ como motor.",
-  "La vida se transforma cuando actúas con ___.",
-  "Haz de la ___ tu bandera en cada paso.",
-  "La ___ es más poderosa que cualquier excusa.",
-  "Respira hondo y llénate de ___.",
-  "Donde hay ___, hay esperanza.",
-  "La ___ transforma los sueños en logros.",
-  "Camina con ___ y llegarás lejos.",
-  "La ___ no se ve, pero se siente en cada acción.",
-  "Sigue adelante, la ___ es tu aliada.",
-  "No hay tormenta que apague tu ___.",
-  "Cada día empieza mejor con un poco de ___.",
-  "Tu éxito está anclado en tu ___.",
-  "La ___ es la brújula del alma.",
-  "Confía en ti y en tu ___.",
-  "Tu ___ es contagiosa, compártela.",
-  "La ___ convierte los problemas en oportunidades.",
-  "Lucha con ___ y vencerás.",
-  "Nunca es tarde para recuperar la ___ perdida.",
-  "Haz de la ___ tu superpoder.",
-  "La ___ no se compra, se cultiva.",
-  "Cree en tu ___ más que en tus dudas.",
-  "Lo que haces con ___ permanece para siempre.",
-  "El secreto del cambio está en la ___.",
-  "La ___ da sentido a cada paso.",
-  "Con ___ se llega más lejos que con suerte.",
-  "Donde hay ___, florecen los sueños.",
-  "La ___ no se rinde.",
-  "Abre tu corazón a la ___.",
-  "Transforma el miedo en ___.",
-  "La ___ ilumina incluso los días más oscuros.",
-  "Actuar con ___ te hace invencible.",
-  "El mundo necesita más personas con ___.",
-  "Haz espacio en tu vida para la ___.",
-  "La ___ multiplica tu energía.",
-  "Tu camino está hecho de ___.",
-  "La ___ es un faro en la tormenta.",
-  "La ___ te da alas.",
-  "Ningún obstáculo puede con la ___.",
-  "La ___ te conecta con tu propósito.",
-  "Sigue brillando con ___.",
-  "Cambia tu mundo con ___.",
-  "Tu historia necesita más ___.",
-  "La ___ es un regalo que te das a ti mismo.",
-  "Respira ___, exhala duda.",
-  "No pierdas la ___, ni siquiera en la oscuridad.",
-  "Cada paso con ___ es una victoria.",
-  "La ___ construye carácter.",
-  "Tu fuerza nace de tu ___.",
-  "Cultiva la ___ como una flor diaria.",
-  "Tu día mejora con un poco de ___.",
-  "Todo empieza con ___.",
-  "Encuentra paz en tu ___.",
-  "La ___ es tu chispa eterna.",
-  "La ___ puede más que el miedo.",
-  "Tus logros nacen de la ___.",
-  "Alimenta tu espíritu con ___.",
-  "La ___ es revolución interna.",
-  "Elige ___, siempre.",
-  "Cada desafío es más fácil con ___.",
-  "Tu ___ es tu guía.",
-  "La ___ vibra en ti.",
-  "La ___ te hace auténtico.",
-  "Ponle ___ a tus días grises.",
-  "La ___ enciende tu creatividad.",
-  "El alma crece con ___.",
-  "Nada supera a la ___ verdadera.",
-  "Encuentra consuelo en la ___.",
-  "La ___ es una revolución silenciosa.",
-  "No hay límites para la ___.",
-  "Tu ___ es tu marca.",
-  "Haz de la ___ tu escudo.",
-  "La ___ te impulsa a avanzar.",
-  "Contagia al mundo con tu ___.",
-  "La ___ embellece la lucha.",
-  "Con ___ no hay derrota.",
-  "Da pasos pequeños, pero con ___.",
-  "Vive con ___ en el pecho.",
-  "La ___ es la semilla del éxito.",
-  "Tu ___ hace la diferencia.",
-  "Ama con ___, lucha con ___, vive con ___.",
-  "La ___ te recuerda quién eres.",
-  "Haz de la ___ tu bandera.",
-  "Vuelve a la ___ cuando lo olvides todo.",
-  "Sé faro de ___ para otros.",
-  "La ___ es tu hogar.",
-  "Transforma tu día con ___.",
-  "Con ___ se construye el mañana.",
-  "Eres más fuerte cuando eliges la ___.",
-  "La ___ abre caminos invisibles.",
-  "Siente la ___ moverse en ti.",
-  "La ___ florece en el silencio.",
-  "Cada error es una oportunidad de ___.",
-  "La ___ nace del corazón.",
-  "Ríe con ___, vive con ___, sueña con ___."
-];
-
+      "Tu palabra clave es ___, úsala para brillar.",
+      "Nunca subestimes el poder de la ___ en tu vida.",
+      "La ___ puede abrir puertas que nunca imaginaste.",
+      "Construye tu camino con ___ cada día.",
+      "La ___ te empuja hacia tu mejor versión.",
+      "En los momentos difíciles, recuerda la ___ que llevas dentro.",
+      "Solo con ___ puedes alcanzar lo imposible.",
+      "No hay límites para quien tiene ___ como motor.",
+      "La vida se transforma cuando actúas con ___.",
+      "Haz de la ___ tu bandera en cada paso.",
+      "La ___ es más poderosa que cualquier excusa.",
+      "Respira hondo y llénate de ___.",
+      "Donde hay ___, hay esperanza.",
+      "La ___ transforma los sueños en logros.",
+      "Camina con ___ y llegarás lejos.",
+      "La ___ no se ve, pero se siente en cada acción.",
+      "Sigue adelante, la ___ es tu aliada.",
+      "No hay tormenta que apague tu ___.",
+      "Cada día empieza mejor con un poco de ___.",
+      "Tu éxito está anclado en tu ___.",
+      "La ___ es la brújula del alma.",
+      "Confía en ti y en tu ___.",
+      "Tu ___ es contagiosa, compártela.",
+      "La ___ convierte los problemas en oportunidades.",
+      "Lucha con ___ y vencerás.",
+      "Nunca es tarde para recuperar la ___ perdida.",
+      "Haz de la ___ tu superpoder.",
+      "La ___ no se compra, se cultiva.",
+      "Cree en tu ___ más que en tus dudas.",
+      "Lo que haces con ___ permanece para siempre.",
+      "El secreto del cambio está en la ___.",
+      "La ___ da sentido a cada paso.",
+      "Con ___ se llega más lejos que con suerte.",
+      "Donde hay ___, florecen los sueños.",
+      "La ___ no se rinde.",
+      "Abre tu corazón a la ___.",
+      "Transforma el miedo en ___.",
+      "La ___ ilumina incluso los días más oscuros.",
+      "Actuar con ___ te hace invencible.",
+      "El mundo necesita más personas con ___.",
+      "Haz espacio en tu vida para la ___.",
+      "La ___ multiplica tu energía.",
+      "Tu camino está hecho de ___.",
+      "La ___ es un faro en la tormenta.",
+      "La ___ te da alas.",
+      "Ningún obstáculo puede con la ___.",
+      "La ___ te conecta con tu propósito.",
+      "Sigue brillando con ___.",
+      "Cambia tu mundo con ___.",
+      "Tu historia necesita más ___.",
+      "La ___ es un regalo que te das a ti mismo.",
+      "Respira ___, exhala duda.",
+      "No pierdas la ___, ni siquiera en la oscuridad.",
+      "Cada paso con ___ es una victoria.",
+      "La ___ construye carácter.",
+      "Tu fuerza nace de tu ___.",
+      "Cultiva la ___ como una flor diaria.",
+      "Tu día mejora con un poco de ___.",
+      "Todo empieza con ___.",
+      "Encuentra paz en tu ___.",
+      "La ___ es tu chispa eterna.",
+      "La ___ puede más que el miedo.",
+      "Tus logros nacen de la ___.",
+      "Alimenta tu espíritu con ___.",
+      "La ___ es revolución interna.",
+      "Elige ___, siempre.",
+      "Cada desafío es más fácil con ___.",
+      "Tu ___ es tu guía.",
+      "La ___ vibra en ti.",
+      "La ___ te hace auténtico.",
+      "Ponle ___ a tus días grises.",
+      "La ___ enciende tu creatividad.",
+      "El alma crece con ___.",
+      "Nada supera a la ___ verdadera.",
+      "Encuentra consuelo en la ___.",
+      "La ___ es una revolución silenciosa.",
+      "No hay límites para la ___.",
+      "Tu ___ es tu marca.",
+      "Haz de la ___ tu escudo.",
+      "La ___ te impulsa a avanzar.",
+      "Contagia al mundo con tu ___.",
+      "La ___ embellece la lucha.",
+      "Con ___ no hay derrota.",
+      "Da pasos pequeños, pero con ___.",
+      "Vive con ___ en el pecho.",
+      "La ___ es la semilla del éxito.",
+      "Tu ___ hace la diferencia.",
+      "Ama con ___, lucha con ___, vive con ___.",
+      "La ___ te recuerda quién eres.",
+      "Haz de la ___ tu bandera.",
+      "Vuelve a la ___ cuando lo olvides todo.",
+      "Sé faro de ___ para otros.",
+      "La ___ es tu hogar.",
+      "Transforma tu día con ___.",
+      "Con ___ se construye el mañana.",
+      "Eres más fuerte cuando eliges la ___.",
+      "La ___ abre caminos invisibles.",
+      "Siente la ___ moverse en ti.",
+      "La ___ florece en el silencio.",
+      "Cada error es una oportunidad de ___.",
+      "La ___ nace del corazón.",
+      "Ríe con ___, vive con ___, sueña con ___."
+    ];
+    
+    // Estado de la aplicación
     let modoFrase = false;
     let inactividadTimer;
-
+    
+    // Referencias a elementos del DOM
+    const palabraDiv = document.getElementById('palabra');
+    const fraseDiv = document.getElementById('frase');
+    const modoToggle = document.getElementById('modo-toggle');
+    const tutorial = document.getElementById('tutorial');
+    const mensajeInactivo = document.getElementById('mensaje-inactivo');
+    const starsContainer = document.getElementById('stars');
+    const mobileTapHint = document.querySelector('.mobile-tap-hint');
+    const shareButton = document.getElementById('share-btn');
+    
+    // Crear estrellas de fondo
+    function crearEstrellas() {
+      const starsCount = 100;
+      for (let i = 0; i < starsCount; i++) {
+        const star = document.createElement('div');
+        star.classList.add('star');
+        
+        // Tamaño aleatorio
+        const size = Math.random() * 3;
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        
+        // Posición aleatoria
+        star.style.left = `${Math.random() * 100}%`;
+        star.style.top = `${Math.random() * 100}%`;
+        
+        // Opacidad aleatoria
+        star.style.opacity = Math.random() * 0.8 + 0.2;
+        
+        // Duración de animación aleatoria
+        star.style.animationDuration = `${Math.random() * 4 + 2}s`;
+        star.style.animationDelay = `${Math.random() * 2}s`;
+        
+        starsContainer.appendChild(star);
+      }
+    }
+    
+    // Cambiar entre modo palabra y frase
     function toggleModo(event) {
       event.stopPropagation();
       modoFrase = !modoFrase;
-      document.getElementById("modo-toggle").textContent = `Modo: ${modoFrase ? 'Frase' : 'Palabra'}`;
+      modoToggle.innerHTML = `
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="${modoFrase ? 'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4' : 'M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z'}"></path>
+        </svg>
+        Modo: ${modoFrase ? 'Frase' : 'Palabra'}
+      `;
       generarPalabra();
     }
-
+    
+    // Generar nueva palabra motivadora
     function generarPalabra() {
       const aleatoria = palabras[Math.floor(Math.random() * palabras.length)];
-      const palabraDiv = document.getElementById("palabra");
-      const fraseDiv = document.getElementById("frase");
-
+      
+      // Animación de la palabra
+      palabraDiv.style.animation = 'none';
+      palabraDiv.offsetHeight; // Forzar reflow
       palabraDiv.textContent = aleatoria;
-      palabraDiv.style.opacity = 0;
-      palabraDiv.style.animation = "none";
-      void palabraDiv.offsetWidth;
-      palabraDiv.style.animation = "aparecer 0.8s ease forwards";
-
+      palabraDiv.style.animation = 'aparecer 0.8s ease forwards';
+      
+      // Manejar frase si está en modo frase
       if (modoFrase) {
         const plantilla = frases[Math.floor(Math.random() * frases.length)];
         const fraseFinal = plantilla.replace("___", aleatoria.toLowerCase());
         fraseDiv.textContent = fraseFinal;
-        fraseDiv.style.opacity = 1;
+        fraseDiv.style.opacity = '1';
       } else {
-        fraseDiv.textContent = "";
-        fraseDiv.style.opacity = 0;
+        fraseDiv.textContent = '';
+        fraseDiv.style.opacity = '0';
+      }
+      
+      // Animación de cambio para móviles
+      if (window.innerWidth < 768) {
+        mobileTapHint.style.animation = 'pulse 0.5s';
+        setTimeout(() => {
+          mobileTapHint.style.animation = 'pulse 2s infinite';
+        }, 500);
       }
     }
-
+    
+    // Reiniciar temporizador de inactividad
     function resetInactividad() {
       clearTimeout(inactividadTimer);
-      document.getElementById("mensaje-inactivo").style.opacity = 0;
+      mensajeInactivo.style.opacity = '0';
+      
       inactividadTimer = setTimeout(() => {
-        document.getElementById("mensaje-inactivo").style.opacity = 1;
-      }, 15000);
+        mensajeInactivo.style.opacity = '1';
+      }, 15000); // 15 segundos
     }
-
-    window.onload = () => {
+    
+    // Ocultar tutorial con animación
+    function ocultarTutorial(event) {
+      if (event) event.stopPropagation();
+      tutorial.classList.add('ocultar');
+      
+      setTimeout(() => {
+        if (tutorial && document.body.contains(tutorial)) {
+          tutorial.remove();
+        }
+      }, 800);
+    }
+    
+    // Función para compartir contenido
+    async function compartirContenido() {
+      const palabraActual = palabraDiv.textContent;
+      const fraseActual = fraseDiv.textContent;
+      
+      try {
+        await navigator.share({
+          title: 'Palabra Motivadora',
+          text: modoFrase ? 
+            `Mi frase motivadora de hoy: "${fraseActual}"` : 
+            `Mi palabra motivadora de hoy: "${palabraActual}"`,
+          url: window.location.href
+        });
+      } catch (err) {
+        console.log('Compartir cancelado', err);
+      }
+    }
+    
+    // Detectar si es un dispositivo táctil
+    function esDispositivoTactil() {
+      return 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
+    }
+    
+    // Inicializar aplicación
+    function inicializar() {
+      crearEstrellas();
       generarPalabra();
       resetInactividad();
-    }
-  
-    function ocultarTutorial(event) {
-  event.stopPropagation();
-  const tutorial = document.getElementById("tutorial");
-  tutorial.classList.add("ocultar")
-  tutorial.classList.add("ocultar")
-  setTimeout(() => {
-    if (tutorial && tutorial.parentNode) {
-      tutorial.parentNode.removeChild(tutorial);
-    }
-  }, 1000);
-}
-
-    // Opcional: ocultar automáticamente después de 10s
-    setTimeout(() => {
-  const tutorial = document.getElementById("tutorial");
-  if (tutorial) {
-    tutorial.style.transition = "opacity 1s ease, transform 1s ease";
-    tutorial.style.opacity = 0;
-    tutorial.style.transform = "translateY(-20px) scale(0.95)";
-    setTimeout(() => {
-      if (tutorial && tutorial.parentNode) {
-        tutorial.parentNode.removeChild(tutorial);
+      
+      // Event listeners para clics y toques
+      document.body.addEventListener('click', (e) => {
+        if (e.target.id !== 'modo-toggle' && e.target.id !== 'share-btn' && e.target.className !== 'tutorial') {
+          generarPalabra();
+          resetInactividad();
+        }
+      });
+      
+      // Event listener para toques en móviles
+      document.body.addEventListener('touchstart', (e) => {
+        if (e.target.id !== 'modo-toggle' && e.target.id !== 'share-btn' && e.target.className !== 'tutorial') {
+          generarPalabra();
+          resetInactividad();
+        }
+      });
+      
+      modoToggle.addEventListener('click', toggleModo);
+      shareButton.addEventListener('click', compartirContenido);
+      
+      // Ocultar botón de compartir si no está soportado
+      if (!navigator.share) {
+        shareButton.style.display = 'none';
       }
-    }, 1000);
-  }
-}, 20000);
+      
+      // Ocultar tutorial automáticamente después de 20s
+      setTimeout(ocultarTutorial, 20000);
+      
+      // Ajustes específicos para móviles
+      if (esDispositivoTactil()) {
+        document.body.classList.add('touch-device');
+        document.querySelector('.tutorial').innerHTML = `
+          💡 Toca en cualquier parte de la pantalla para cambiar la palabra<br><br>
+          Usa los botones de arriba para alternar entre modo 'Palabra' y 'Frase' o compartir
+          <button onclick="ocultarTutorial(event)">Entendido</button>
+        `;
+      }
+    }
+    
+    // Iniciar cuando el DOM esté cargado
+    document.addEventListener('DOMContentLoaded', inicializar);
+    
+    // Registrar Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('service-worker.js')
+          .then(reg => console.log('Service worker registrado ✅'))
+          .catch(err => console.log('Fallo el registro 😬', err));
+      });
+    }
   </script>
-
-  <footer style="position: absolute; bottom: 10px; text-align: center; width: 100%; font-size: 0.9rem; color: #888;">
-    Hecho por <strong>Digital</strong> con ❤️ y <strong>ChatGPT</strong>
-  </footer>
 </body>
 </html>
