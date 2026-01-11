@@ -1,319 +1,139 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Genera palabras y frases motivadoras al instante. Inspírate con una sola pulsación.">
-  <meta name="theme-color" content="#0f3460">
-  <title>Palabra Motivadora</title>
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="icon.png" type="image/png">
-  <style>
-    :root {
-      --color-primary: #0f3460;
-      --color-secondary: #16213e;
-      --color-accent: #e94560;
-      --color-text: #ffffff;
-      --color-bg: #0f0f0f;
-      --border-radius: 20px;
-      --transition-duration: 0.4s;
-    }
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-    }
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      background: linear-gradient(-45deg, var(--color-bg), var(--color-secondary), var(--color-primary));
-      background-size: 400% 400%;
-      animation: fondoAnimado 20s ease infinite;
-      color: var(--color-text);
-      overflow: hidden;
-      position: relative;
-      touch-action: manipulation;
-    }
-    @keyframes fondoAnimado {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    .container {
-      text-align: center;
-      padding: 30px 20px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: var(--border-radius);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-      backdrop-filter: blur(10px);
-      animation: fadeIn 1s ease-in-out;
-      max-width: 95%;
-      width: 700px;
-      margin: 0 auto;
-    }
-    #palabra {
-      font-size: clamp(2.5rem, 8vw, 3.5rem);
-      font-weight: bold;
-      opacity: 0;
-      cursor: pointer;
-      margin: 20px 0;
-      min-height: 100px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
-      transition: transform 0.3s ease;
-      padding: 10px;
-    }
-    #palabra:hover {
-      transform: scale(1.05);
-    }
-    #frase {
-      font-size: clamp(1.2rem, 4vw, 1.6rem);
-      opacity: 0;
-      transition: opacity var(--transition-duration) ease;
-      line-height: 1.6;
-      margin-top: 20px;
-      font-style: italic;
-      min-height: 80px;
-      padding: 0 10px;
-    }
-    .control-buttons {
-      position: absolute;
-      top: 15px;
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      padding: 0 15px;
-      z-index: 10;
-    }
-    .control-button {
-      background-color: rgba(255, 255, 255, 0.1);
-      border: none;
-      padding: 10px 15px;
-      border-radius: 10px;
-      color: white;
-      cursor: pointer;
-      transition: all var(--transition-duration) ease;
-      font-weight: 600;
-      backdrop-filter: blur(5px);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-      font-size: clamp(0.8rem, 3.5vw, 1rem);
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-    .control-button:hover {
-      background-color: rgba(255, 255, 255, 0.2);
-      transform: translateY(-2px);
-    }
-    #mensaje-inactivo {
-      position: absolute;
-      top: -30px;
-      left: 50%;
-      transform: translateX(-50%);
-      opacity: 0;
-      transition: opacity 0.5s;
-      font-size: clamp(0.8rem, 3vw, 1rem);
-      color: #aaa;
-      font-style: italic;
-    }
-    .tutorial {
-      position: absolute;
-      top: 80px;
-      max-width: 90%;
-      text-align: center;
-      font-size: clamp(0.9rem, 3.5vw, 1rem);
-      color: #ccc;
-      background-color: rgba(0, 0, 0, 0.6);
-      padding: 20px;
-      border-radius: 12px;
-      backdrop-filter: blur(8px);
-      opacity: 0;
-      transform: translateY(20px) scale(0.95);
-      z-index: 100;
-      width: min(350px, 90%);
-      animation: tutorialEntrada 0.8s ease forwards;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    .tutorial button {
-      margin-top: 15px;
-      padding: 8px 16px;
-      background: rgba(255, 255, 255, 0.15);
-      border: none;
-      color: white;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      font-size: clamp(0.8rem, 3.5vw, 0.9rem);
-    }
-    .tutorial button:hover {
-      background: rgba(255, 255, 255, 0.25);
-      transform: scale(1.05);
-    }
-    .tutorial.ocultar {
-      animation: tutorialSalida 0.8s ease forwards !important;
-    }
-    footer {
-      position: absolute;
-      bottom: 15px;
-      text-align: center;
-      width: 100%;
-      font-size: clamp(0.75rem, 3vw, 0.9rem);
-      color: rgba(255, 255, 255, 0.6);
-      padding: 0 20px;
-    }
-    footer strong {
-      color: var(--color-accent);
-      font-weight: 600;
-    }
-    @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-    @keyframes aparecer { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-    @keyframes pulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.05); opacity: 0.85; } }
-    @keyframes float { 0%,100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
-    @keyframes tutorialEntrada { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
-    @keyframes tutorialSalida { from { opacity: 1; transform: translateY(0) scale(1); } to { opacity: 0; transform: translateY(-20px) scale(0.95); } }
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=5.0"
+    />
+    <meta
+      name="description"
+      content="Genera palabras y frases motivadoras al instante. Inspírate con una sola pulsación."
+    />
+    <meta name="theme-color" content="#10002b" />
+    <title>Palabra Motivadora</title>
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" href="icon.png" type="image/png" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- Background Animation -->
+    <div class="background-canvas">
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <div class="orb orb-3"></div>
+    </div>
 
-    .stars { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; overflow: hidden; }
-    .star { position: absolute; background-color: white; border-radius: 50%; animation: float 3s infinite ease-in-out; }
-    .mobile-tap-hint {
-      position: absolute; bottom: 80px; width: 70px; height: 70px;
-      border-radius: 50%; background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(5px); display: none; justify-content: center;
-      align-items: center; animation: pulse 2s infinite; z-index: 50;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-    }
-    .mobile-tap-hint::before {
-      content: "Toca aquí"; position: absolute; bottom: -25px;
-      font-size: 0.8rem; white-space: nowrap; color: #fff;
-    }
-    @media (max-width: 768px) { .mobile-tap-hint { display: flex; } }
-  </style>
-</head>
-<body>
-  <div class="stars" id="stars"></div>
-  <div class="control-buttons">
-    <button id="share-btn" class="control-button">
-      📤 Compartir
-    </button>
-    <button id="modo-toggle" class="control-button">🌀 Modo: Palabra</button>
-  </div>
-  <div id="tutorial" class="tutorial">
-    💡 Toca en cualquier parte de la pantalla para cambiar la palabra<br><br>
-    Usa los botones de arriba para alternar entre modo 'Palabra' y 'Frase' o compartir
-    <button onclick="ocultarTutorial(event)">Entendido</button>
-  </div>
-  <div id="mensaje-inactivo">Toca para otra palabra</div>
-  <div class="mobile-tap-hint"></div>
-  <div class="container">
-    <div id="palabra">Toca para comenzar</div>
-    <div id="frase"></div>
-  </div>
-  <footer>Hecho por <strong>Digital</strong>, <strong>ChatGPT</strong> y <strong>DeepSeek</strong></footer>
+    <!-- HUD Counter -->
+    <div class="hud-counter">
+      <span class="count-label">VISTAS</span>
+      <span id="counter-display">0</span>
+    </div>
 
-  <script>
-    const palabras = ["Ánimo","Esperanza","Confianza","Esfuerzo","Pasión","Éxito","Fuerza","Valentía","Alegría","Paciencia","Optimismo","Perseverancia"];
-    const frases = ["Tu palabra clave es ___, úsala para brillar.","Nunca subestimes el poder de la ___ en tu vida.","Construye tu camino con ___ cada día."];
+    <!-- Top Controls -->
+    <header class="controls-top">
+      <button id="btn-sound" class="btn-icon" aria-label="Sonido">
+        <svg viewBox="0 0 24 24">
+          <path
+            d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"
+          />
+        </svg>
+      </button>
+      <button id="btn-menu" class="btn-icon" aria-label="Favoritos">
+        <svg viewBox="0 0 24 24" stroke="currentColor" fill="none">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M4 6h16M4 12h16M4 18h16"
+          />
+        </svg>
+      </button>
+    </header>
 
-    let modoFrase = false, inactividadTimer;
-    const palabraDiv = document.getElementById('palabra'),
-          fraseDiv = document.getElementById('frase'),
-          modoToggle = document.getElementById('modo-toggle'),
-          tutorial = document.getElementById('tutorial'),
-          mensajeInactivo = document.getElementById('mensaje-inactivo'),
-          starsContainer = document.getElementById('stars'),
-          shareButton = document.getElementById('share-btn');
+    <!-- Main Card -->
+    <main class="main-card">
+      <div class="mode-indicator">MOOD: PALABRA</div>
 
-    function crearEstrellas() {
-      const fragment = document.createDocumentFragment();
-      for (let i = 0; i < 100; i++) {
-        const s = document.createElement('div');
-        s.className = 'star';
-        const size = Math.random() * 3;
-        s.style.width = `${size}px`;
-        s.style.height = `${size}px`;
-        s.style.left = `${Math.random() * 100}%`;
-        s.style.top = `${Math.random() * 100}%`;
-        s.style.opacity = Math.random() * 0.8 + 0.2;
-        s.style.animationDuration = `${Math.random() * 4 + 2}s`;
-        fragment.appendChild(s);
+      <div id="content-area" class="content-wrapper">
+        <div id="word-display">Inspírate</div>
+        <div id="phrase-display">...</div>
+
+
+      </div>
+
+      <!-- Interaction Bar -->
+      <div class="controls-bottom">
+        <button id="btn-mode" class="btn-pill">🔤 Frase</button>
+        <button id="btn-fav" class="btn-icon" aria-label="Guardar Favorito">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+            />
+          </svg>
+        </button>
+        <button
+          id="btn-achi"
+          class="btn-icon"
+          aria-label="Logros"
+        >
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94.63 1.5 1.98 2.63 3.61 2.96V19H7v2h10v-2h-4v-3.1c1.63-.33 2.98-1.46 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM7 8V7h2v3.82C8.36 10.4 7.5 9.3 7 8zm12 0c-.5 1.3-1.36 2.4-2 2.82V7h2v1z"
+            />
+          </svg>
+        </button>
+        <button
+          id="btn-share"
+          class="btn-icon"
+          onclick="share()"
+          aria-label="Compartir"
+        >
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"
+            />
+          </svg>
+        </button>
+      </div>
+    </main>
+
+    <!-- Favorites Panel -->
+    <div class="favorites-panel" id="fav-panel">
+      <div class="panel-header">
+        <h2>Favoritos 💙</h2>
+        <button class="btn-icon" id="close-panel">✕</button>
+      </div>
+      <ul class="fav-list" id="fav-list">
+        <!-- Favorites injected here -->
+      </ul>
+    </div>
+
+    <!-- Achievements Panel -->
+    <div class="favorites-panel" id="achi-panel">
+      <div class="panel-header">
+        <h2>Logros 🏆</h2>
+        <button class="btn-icon" id="close-achi-panel">✕</button>
+      </div>
+      <ul class="fav-list" id="achi-list">
+        <!-- Achievements injected here -->
+      </ul>
+      <div class="panel-footer">
+        <button id="btn-reset" class="btn-reset">⚠️ Reiniciar Progreso</button>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">Guardado</div>
+
+    <script src="script.js"></script>
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("./service-worker.js");
       }
-      starsContainer.appendChild(fragment);
-    }
-
-    function toggleModo(e) {
-      e.stopPropagation();
-      modoFrase = !modoFrase;
-      modoToggle.textContent = `🌀 Modo: ${modoFrase ? 'Frase' : 'Palabra'}`;
-      generarPalabra();
-      resetInactividad();
-    }
-
-    function generarPalabra() {
-      const aleatoria = palabras[Math.floor(Math.random() * palabras.length)];
-      palabraDiv.style.animation = 'none';
-      palabraDiv.offsetHeight;
-      palabraDiv.textContent = aleatoria;
-      palabraDiv.style.animation = 'aparecer 0.8s ease forwards';
-      if (modoFrase) {
-        const plantilla = frases[Math.floor(Math.random() * frases.length)];
-        fraseDiv.textContent = plantilla.replace("___", aleatoria.toLowerCase());
-        fraseDiv.style.opacity = '1';
-      } else {
-        fraseDiv.style.opacity = '0';
-        fraseDiv.textContent = '';
-      }
-    }
-
-    function resetInactividad() {
-      clearTimeout(inactividadTimer);
-      mensajeInactivo.style.opacity = '0';
-      inactividadTimer = setTimeout(() => mensajeInactivo.style.opacity = '1', 15000);
-    }
-
-    function ocultarTutorial(e) {
-      if (e) e.stopPropagation();
-      tutorial.classList.add('ocultar');
-      setTimeout(() => tutorial.remove(), 800);
-    }
-
-    async function compartirContenido() {
-      try {
-        const palabraActual = palabraDiv.textContent;
-        const fraseActual = fraseDiv.textContent;
-        if (navigator.share) {
-          await navigator.share({
-            title: 'Palabra Motivadora',
-            text: modoFrase ? fraseActual : palabraActual,
-            url: location.href
-          });
-        } else {
-          alert('Tu navegador no admite compartir directamente.');
-        }
-      } catch {}
-      resetInactividad();
-    }
-
-    function inicializar() {
-      crearEstrellas();
-      generarPalabra();
-      resetInactividad();
-      document.body.addEventListener('click', (e) => {
-        if (!e.target.closest('.control-button') && !e.target.closest('.tutorial')) {
-          generarPalabra(); resetInactividad();
-        }
-      });
-      modoToggle.addEventListener('click', toggleModo);
-      shareButton.addEventListener('click', compartirContenido);
-      setTimeout(ocultarTutorial, 20000);
-    }
-    document.addEventListener('DOMContentLoaded', inicializar);
-  </script>
-</body>
+    </script>
+  </body>
 </html>
