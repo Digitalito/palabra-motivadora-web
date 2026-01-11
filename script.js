@@ -410,6 +410,16 @@ function toggleMode() {
   els.modeBadge.textContent =
     state.mode === "word" ? "MODO: PALABRA" : "MODO: FRASE";
   els.btnMode.textContent = state.mode === "word" ? "🔤 Frase" : "✨ Palabra";
+  
+  // Update classes for color
+  if (state.mode === "word") {
+    els.modeBadge.classList.add("mode-word");
+    els.modeBadge.classList.remove("mode-phrase");
+  } else {
+    els.modeBadge.classList.add("mode-phrase");
+    els.modeBadge.classList.remove("mode-word");
+  }
+
   generate();
 }
 
@@ -529,6 +539,9 @@ document.getElementById("btn-reset").addEventListener("click", () => {
 });
 
 // Init
+// Set initial mode class
+els.modeBadge.classList.add(state.mode === "word" ? "mode-word" : "mode-phrase");
+
 generate();
 renderFavs();
 updateSoundIcon();

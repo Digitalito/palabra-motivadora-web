@@ -216,6 +216,21 @@ body {
   letter-spacing: 1px;
   box-shadow: 0 4px 12px rgba(247, 37, 133, 0.4);
   animation: popIn 0.3s var(--ease-elastic);
+  transition: background-color 0.3s var(--ease-smooth);
+}
+
+.mode-indicator.mode-word {
+  background-color: #d00000; /* Red for Word */
+}
+
+.mode-indicator.mode-phrase {
+  background-color: #fca311; /* Orange for Phrase */
+  color: #000; /* Better contrast for orange if needed, or stick to white if it's dark orange */
+}
+/* Let's try to keep white text if I pick a darker orange */
+.mode-indicator.mode-phrase {
+  background-color: #e85d04; /* Darker Orange */
+  color: white;
 }
 
 .tap-hint {
